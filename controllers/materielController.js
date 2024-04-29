@@ -1,8 +1,9 @@
 import Materiel from '../models/materiel.js';
 import {handler} from '../exceptions/handler.js';
 
+
 const createMateriel = (req, res) => {
-    const { nom, description, type, statut, salle, date_renouvellement } = req.body;
+    const { nom, description, type, statut, salle, date_renouvellement, matricule } = req.body;
 
     // Créer une nouvelle instance de Materiel avec les données fournies
     const nouveauMateriel = new Materiel({
@@ -11,7 +12,8 @@ const createMateriel = (req, res) => {
         type,
         statut,
         salle,
-        date_renouvellement
+        date_renouvellement,
+        matricule
     });
 
     // Enregistrer le nouveau matériel dans la base de données
@@ -47,8 +49,33 @@ const getAllMateriel = (req, res)=> {
         });
 }
 
+const updateMateriel = (req, res) => {
+    const id = req.params.id;
+    const { nom, description, type, statut, salle, date_renouvellement, matricule } = req.body;
+
+    Materiel.findByIdAndUpdate(id, {
+        nom,
+        description,
+        type,
+        statut,
+        salle,
+        date_renouvellement,
+        matricule
+    }, { new: true })
+        .then(materiel => {
+            if (!materiel) {
+                return res.status(404).json({ error: 'Materiel not found' });
+            }
+            res.status(200).json({ materiel });
+        })
+        .catch(err => {
+            return handler(res, 'INTERNAL_ERROR', err.message, 500);
+        });
+};
+
 export default {
     createMateriel,
     getUnMateriel,
-    getAllMateriel
+    getAllMateriel,
+    updateMateriel
 };

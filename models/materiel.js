@@ -25,6 +25,13 @@ const materielSchema = new mongoose.Schema({
     },
     date_renouvellement: {
         type: Date
+    },
+    matricule: {
+        type: String,
+        required: true,
+        unique: true,
+        minlength: 5,
+        maxlength: 5
     }
 });
 
