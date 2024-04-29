@@ -8,5 +8,6 @@ router.post('/',materielController.createMateriel);
 router.get('/:id',materielController.getUnMateriel);
 router.get('/',materielController.getAllMateriel);
 router.put('/:id', materielController.updateMateriel);
+router.delete('/:id', materielController.deleteMateriel);
 
 export default router;

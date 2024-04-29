@@ -64,7 +64,7 @@ const updateMateriel = (req, res) => {
     }, { new: true })
         .then(materiel => {
             if (!materiel) {
-                return res.status(404).json({ error: 'Materiel not found' });
+                return handler(res, 'NOT_FOUND', 'Matériel non trouvé', 404);
             }
             res.status(200).json({ materiel });
         })
@@ -73,9 +73,24 @@ const updateMateriel = (req, res) => {
         });
 };
 
+const deleteMateriel = async (req, res) => {
+    const id = req.params.id;
+
+    try {
+        const deletedMateriel = await Materiel.findByIdAndDelete(id);
+        if (!deletedMateriel) {
+            return handler(res, 'NOT_FOUND', 'Matériel non trouvé', 404);
+        }
+        res.status(200).json({ message: 'Matériel supprimé avec succès' });
+    } catch (error) {
+        return handler(res, 'INTERNAL_ERROR', error.message, 500);
+    }
+}
+
 export default {
     createMateriel,
     getUnMateriel,
     getAllMateriel,
-    updateMateriel
+    updateMateriel,
+    deleteMateriel
 };
