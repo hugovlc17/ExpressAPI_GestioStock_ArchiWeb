@@ -1,4 +1,5 @@
 import TypeMateriel from '../models/typeMateriel.js';
+import {handler} from '../exceptions/handler.js';
 
 const createTypeMateriel = (req, res) => {
 
@@ -12,8 +13,8 @@ const createTypeMateriel = (req, res) => {
         .then(typeMateriel => {
             res.status(201).json({ typeMateriel });
         })
-        .catch(err => {
-            res.status(500).json({ error: err.message });
+        .catch(error => {
+            return handler(res, 'INTERNAL_ERROR', error.message, 500);
         });
 };
 

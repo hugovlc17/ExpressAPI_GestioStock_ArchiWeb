@@ -3,7 +3,6 @@ import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import RouteMateriels from './routes/materiels.js';
 import typeMaterielsRoutes from './routes/typesMateriel.js';
-import errorHandler from "./exceptions/errorHandler.js";
 
 const app = express();
 
@@ -18,7 +17,6 @@ app.use(bodyParser.json());
 app.use('/api/materiels/', RouteMateriels);
 app.use('/api/typeMateriels/',typeMaterielsRoutes);
 
-app.use(errorHandler);
 
 export default app;
 
