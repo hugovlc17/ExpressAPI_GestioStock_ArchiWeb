@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import RouteMateriels from './routes/materiels.js';
 import typeMaterielsRoutes from './routes/typesMateriel.js';
+import utilisateurRoutes from "./routes/utilisateurs.js";
 
 const app = express();
 
@@ -16,6 +17,7 @@ mongoose.connect('mongodb+srv://userdb:umPN6ni@clusterhugomiage.cmsugih.mongodb.
 app.use(bodyParser.json());
 app.use('/api/materiels/', RouteMateriels);
 app.use('/api/typeMateriels/',typeMaterielsRoutes);
+app.use('/api/utilisateurs',utilisateurRoutes);
 
 
 export default app;
