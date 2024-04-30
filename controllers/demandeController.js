@@ -65,4 +65,19 @@ const getUneDemande = async (req, res) =>{
         });
 };
 
-export default { createDemande, getAllDemandes, getUneDemande };
+const deleteDemande = async (req, res) => {
+    const id = req.params.id;
+
+    try{
+        const demande = await Demande.findById(id);
+        if (!demande) {
+            return handler(res, 'NOT_FOUND', 'La demande n\'a pas été trouvée', 404);
+        }
+        await Demande.findByIdAndDelete(id);
+        res.status(200).json({ message: 'Demande supprimée !' });
+    }catch (error) {
+        return handler(res, 'INTERNAL_ERROR', error.message, 500);
+    }
+}
+
+export default { createDemande, getAllDemandes, getUneDemande, deleteDemande };
