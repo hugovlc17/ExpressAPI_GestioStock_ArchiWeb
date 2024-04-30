@@ -21,6 +21,12 @@ const demandeSchema = new mongoose.Schema({
         default: Date.now,
         required: true
     },
+    date_rendu: {
+        type: Date,
+        required: function() {
+            return this.type_demande === 'Rendu';
+        }
+    },
     statut: {
         type: String,
         enum: ['En attente', 'Approuvée', 'Refusée'],
