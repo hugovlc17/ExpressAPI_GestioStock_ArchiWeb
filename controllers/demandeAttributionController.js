@@ -80,6 +80,15 @@ const deleteDemande = async (req, res) => {
     }
 }
 
+const validerDemande = async (req, res) =>{
+    //créer l'attribution avec l'id de la demandeAttribution.
+    //Créer une attribution
+}
+
+const refuserDemande = async (req, res) =>{
+}
+
+
 
 
 export default {createDemande, getAllDemandes, getUneDemande, deleteDemande};

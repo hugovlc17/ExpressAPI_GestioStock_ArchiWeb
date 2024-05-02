@@ -28,6 +28,6 @@ const attributionSchema = new mongoose.Schema({
     }
 });
 
-const DemandeAttribution = mongoose.model('Attribution', attributionSchema);
+const DemandeAttribution = mongoose.model('DemandeAttribution', attributionSchema);
 
 export default DemandeAttribution;

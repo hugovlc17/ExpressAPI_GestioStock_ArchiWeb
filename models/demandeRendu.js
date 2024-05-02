@@ -6,9 +6,9 @@ const demandeRenduSchema = new mongoose.Schema({
         ref: 'Utilisateur',
         required: true
     },
-    id_demande_attribution: {
+    id_attribution: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'DemandeAttribution',
+        ref: 'Attribution',
         required: true
     },
     date_demande_rendu: {
