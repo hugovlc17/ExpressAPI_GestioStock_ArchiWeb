@@ -4,7 +4,8 @@ import bodyParser from 'body-parser';
 import RouteMateriels from './routes/materiels.js';
 import typeMaterielsRoutes from './routes/typesMateriel.js';
 import utilisateurRoutes from "./routes/utilisateurs.js";
-import demandeRoutes from "./routes/demandes.js";
+import demandesAttributions from "./routes/demandesAttributions.js";
+import attributions from "./routes/demandesAttributions.js";
 
 const app = express();
 
@@ -19,7 +20,8 @@ app.use(bodyParser.json());
 app.use('/api/materiels/', RouteMateriels);
 app.use('/api/typeMateriels/',typeMaterielsRoutes);
 app.use('/api/utilisateurs',utilisateurRoutes);
-app.use('/api/demandes/', demandeRoutes);
+//app.use('/api/demandes/', demandeRoutes);
+app.use('/api/demandesAttribution/', demandesAttributions);
 
 
 export default app;

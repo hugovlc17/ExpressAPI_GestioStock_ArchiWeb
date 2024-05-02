@@ -22,11 +22,12 @@ const attributionSchema = new mongoose.Schema({
     },
     statut: {
         type: String,
-        enum: ['en cours', 'terminé'],
-        default: 'en cours'
+        enum: ['En attente', 'Approuvée', 'Refusée'],
+        default: 'En attente',
+        required: true
     }
 });
 
-const Attribution = mongoose.model('Attribution', attributionSchema);
+const DemandeAttribution = mongoose.model('Attribution', attributionSchema);
 
-export default Attribution;
+export default DemandeAttribution;
