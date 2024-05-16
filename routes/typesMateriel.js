@@ -1,8 +1,9 @@
 import express from 'express';
 import typeMaterielController from '../controllers/typeMaterielController.js';
+import auth from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.post('/', typeMaterielController.createTypeMateriel);
+router.post('/', auth, typeMaterielController.createTypeMateriel);
 
 export default router;
