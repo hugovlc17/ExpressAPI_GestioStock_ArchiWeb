@@ -14,5 +14,4 @@ const auth = (req, res, next) => {
         res.status(400).json({ message: 'Token invalide.' });
     }
 };
-g
 export default auth;
