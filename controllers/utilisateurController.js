@@ -3,6 +3,8 @@ import bcrypt from 'bcryptjs';
 import {handler} from '../exceptions/handler.js';
 import jwt from "jsonwebtoken";
 import dotenv from 'dotenv';
+import utilisateurs from "../routes/utilisateurs.js";
+import Materiel from "../models/materiel.js";
 dotenv.config();
 
 const secretKey = process.env.SECRET_KEY;
@@ -83,4 +85,14 @@ const loginUtilisateur = async (req, res) =>{
 
 };
 
-export default {createUtilisateur, loginUtilisateur};
+const getAllUtilisateur = (req, res) =>{
+    Utilisateur.find()
+        .select('nom prenom email username type')
+        .then((utilisateurs) => {
+            return res.status(200).json({ utilisateurs });
+        })
+        .catch(error => {
+            return handler(res, 'INTERNAL_ERROR', error.message, 500);
+        });
+}
+export default {createUtilisateur, loginUtilisateur, getAllUtilisateur};
