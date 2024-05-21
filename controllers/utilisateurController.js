@@ -94,5 +94,19 @@ const getAllUtilisateur = (req, res) =>{
         .catch(error => {
             return handler(res, 'INTERNAL_ERROR', error.message, 500);
         });
+};
+
+const getUnUtilisateur = (req, res)=> {
+    const id = req.params.id;
+
+    Utilisateur.findOne({_id: id})
+        .then((utilisateur) => {
+            return res.status(200).json({utilisateur})
+        })
+        .catch(error => {
+            return handler(res, 'INTERNAL_ERROR', error.message, 500);
+        });
 }
-export default {createUtilisateur, loginUtilisateur, getAllUtilisateur};
+
+
+export default {createUtilisateur, loginUtilisateur, getAllUtilisateur, getUnUtilisateur};
