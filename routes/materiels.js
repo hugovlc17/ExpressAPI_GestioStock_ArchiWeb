@@ -8,7 +8,7 @@ const router = express.Router();
 router.post('/', auth, materielController.createMateriel);
 router.get('/:id', auth, materielController.getUnMateriel);
 router.get('/', auth, materielController.getAllMateriel);
-router.put('/:id', auth, materielController.updateMateriel);
+router.put('/:id', materielController.updateMateriel);
 router.delete('/:id', auth, materielController.deleteMateriel);
 
 export default router;

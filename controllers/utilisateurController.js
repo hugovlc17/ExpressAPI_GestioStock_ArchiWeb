@@ -106,7 +106,38 @@ const getUnUtilisateur = (req, res)=> {
         .catch(error => {
             return handler(res, 'INTERNAL_ERROR', error.message, 500);
         });
-}
+};
+
+const updateUtilisateur = async (req, res) => {
+    const id = req.params.id;
+    const { nom, prenom, type, email, username, motDePasse } = req.body;
+
+    try {
+        const utilisateur = await Utilisateur.findById(id);
+        if (!utilisateur) {
+            return handler(res, 'NOT_FOUND', 'Utilisateur non trouvé.', 404);
+        }
+
+        // Mettre à jour les champs seulement s'ils sont présents dans la requête
+        if (nom !== undefined) utilisateur.nom = nom;
+        if (prenom !== undefined) utilisateur.prenom = prenom;
+        if (type !== undefined) utilisateur.type = type;
+        if (email !== undefined) utilisateur.email = email;
+        if (username !== undefined) utilisateur.username = username;
+        if (motDePasse !== undefined) {
+            if (motDePasse.length < 8) {
+                return handler(res, 'BAD_REQUEST', 'Le mot de passe doit contenir au moins 8 caractères.', 400);
+            }
+            utilisateur.motDePasse = await bcrypt.hash(motDePasse, 10);
+        }
+
+        await utilisateur.save();
+
+        res.status(200).json({ utilisateur });
+    } catch (error) {
+        return handler(res, 'INTERNAL_ERROR', error.message, 500);
+    }
+};
 
 
-export default {createUtilisateur, loginUtilisateur, getAllUtilisateur, getUnUtilisateur};
+export default {createUtilisateur, loginUtilisateur, getAllUtilisateur, getUnUtilisateur, updateUtilisateur};
