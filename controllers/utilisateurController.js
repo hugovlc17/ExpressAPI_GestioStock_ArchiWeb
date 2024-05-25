@@ -139,5 +139,19 @@ const updateUtilisateur = async (req, res) => {
     }
 };
 
+const deleteUtilisateur = async (req, res) =>{
+    const id = req.params.id;
 
-export default {createUtilisateur, loginUtilisateur, getAllUtilisateur, getUnUtilisateur, updateUtilisateur};
+    try{
+        const deleteUtilisateur = await Utilisateur.findByIdAndDelete(id);
+        if(!deleteUtilisateur) {
+            return handler(res, 'NOT_FOUND', 'Utilisateur non trouvé', 404);
+        }
+        res.status(200).json({ message: 'Utilisateur supprimé avec succès'});
+    }catch (error){
+        return handler(res, 'INTERNAL_ERROR', error.message, 500);
+    }
+}
+
+
+export default {createUtilisateur, loginUtilisateur, getAllUtilisateur, getUnUtilisateur, updateUtilisateur, deleteUtilisateur};

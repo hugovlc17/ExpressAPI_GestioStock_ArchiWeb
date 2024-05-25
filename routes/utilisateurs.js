@@ -9,5 +9,6 @@ router.post('/login', utilisateurController.loginUtilisateur);
 router.get('/',auth, utilisateurController.getAllUtilisateur);
 router.get('/:id',auth, utilisateurController.getUnUtilisateur);
 router.put('/:id',auth, utilisateurController.updateUtilisateur);
+router.delete('/:id', utilisateurController.deleteUtilisateur);
 
 export default router;
