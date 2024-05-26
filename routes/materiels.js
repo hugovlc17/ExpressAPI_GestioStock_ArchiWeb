@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post('/', auth, materielController.createMateriel);
 router.get('/:id', auth, materielController.getUnMateriel);
-router.get('/', auth, materielController.getAllMateriel);
+router.get('/', materielController.getAllMateriel);
 router.put('/:id', materielController.updateMateriel);
 router.delete('/:id', auth, materielController.deleteMateriel);
 
