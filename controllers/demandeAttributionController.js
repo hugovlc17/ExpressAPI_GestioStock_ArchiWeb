@@ -5,13 +5,23 @@ import Materiel from "../models/materiel.js";
 import Utilisateur from "../models/utilisateur.js";
 
 export const getAllDemandesAttribution = async (req, res) => {
-    DemandeAttribution.find()
-        .then((demandes) => {
-            return res.status(200).json({demandes})
-        })
-        .catch(error => {
-            return handler(res, 'INTERNAL_ERROR', error.message, 500);
-        });
+    try {
+        const demandesAttribution = await DemandeAttribution.find().populate('id_utilisateur').populate('id_materiel');
+        const formattedDemandes = demandesAttribution.map(demande => ({
+            _id: demande._id,
+            id_utilisateur: demande.id_utilisateur._id,
+            username_utilisateur: demande.id_utilisateur.username,
+            id_materiel: demande.id_materiel._id,
+            nom_materiel: demande.id_materiel.nom,
+            statut: demande.statut,
+            salle: demande.salle,
+            date_demande: demande.date_demande.toISOString().split('T')[0], // Format YYYY-MM-DD
+            __v: demande.__v
+        }));
+        res.status(200).json({ demandesAttribution: formattedDemandes });
+    } catch (error) {
+        return handler(res, 'INTERNAL_ERROR', error.message, 500);
+    }
 };
 
 export const createDemandeAttribution = async (req, res) => {
