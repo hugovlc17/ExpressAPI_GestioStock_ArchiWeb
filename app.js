@@ -4,8 +4,9 @@ import bodyParser from 'body-parser';
 import RouteMateriels from './routes/materiels.js';
 import typeMaterielsRoutes from './routes/typesMateriel.js';
 import utilisateurRoutes from "./routes/utilisateurs.js";
-import demandesAttributions from "./routes/demandesAttributions.js";
-import attributions from "./routes/demandesAttributions.js";
+import demandesAttributionRoutes from "./routes/demandesAttribution.js";
+import demandesRenduRoutes from "./routes/demandesRendu.js";
+
 import dotenv from 'dotenv';
 import cors from 'cors';
 //const dotenv = require('dotenv');
@@ -29,8 +30,8 @@ app.use(bodyParser.json());
 app.use('/api/materiels/', RouteMateriels);
 app.use('/api/typeMateriels/',typeMaterielsRoutes);
 app.use('/api/utilisateurs',utilisateurRoutes);
-//app.use('/api/demandes/', demandeRoutes);
-app.use('/api/demandesAttribution/', demandesAttributions);
+app.use('/api/demandesAttribution', demandesAttributionRoutes);
+app.use('/api/demandesRendu', demandesRenduRoutes);
 
 
 export default app;

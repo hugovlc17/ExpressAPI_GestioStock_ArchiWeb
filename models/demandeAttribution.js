@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const attributionSchema = new mongoose.Schema({
+const demandeAttributionSchema = new mongoose.Schema({
     id_utilisateur: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Utilisateur',
@@ -11,13 +11,9 @@ const attributionSchema = new mongoose.Schema({
         ref: 'Materiel',
         required: true
     },
-    date_attribution: {
+    date_demande: {
         type: Date,
         default: Date.now,
-        required: true
-    },
-    date_retour_prevue: {
-        type: Date,
         required: true
     },
     statut: {
@@ -25,9 +21,12 @@ const attributionSchema = new mongoose.Schema({
         enum: ['En attente', 'Approuvée', 'Refusée'],
         default: 'En attente',
         required: true
+    },
+    salle: {
+        type: String
     }
 });
 
-const DemandeAttribution = mongoose.model('DemandeAttribution', attributionSchema);
+const DemandeAttribution = mongoose.model('DemandeAttribution', demandeAttributionSchema);
 
 export default DemandeAttribution;

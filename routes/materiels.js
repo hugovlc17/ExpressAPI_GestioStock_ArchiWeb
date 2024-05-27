@@ -5,7 +5,7 @@ import auth from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.post('/', auth, materielController.createMateriel);
+router.post('/', materielController.createMateriel);
 router.get('/:id', auth, materielController.getUnMateriel);
 router.get('/', materielController.getAllMateriel);
 router.put('/:id', materielController.updateMateriel);
