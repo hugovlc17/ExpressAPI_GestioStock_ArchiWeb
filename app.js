@@ -4,8 +4,10 @@ import bodyParser from 'body-parser';
 import RouteMateriels from './routes/materiels.js';
 import typeMaterielsRoutes from './routes/typesMateriel.js';
 import utilisateurRoutes from "./routes/utilisateurs.js";
-import demandesAttributionRoutes from "./routes/demandesAttribution.js";
-import demandesRenduRoutes from "./routes/demandesRendu.js";
+import DemandeAttributionRoutes from "./routes/demandeAttributions.js";
+import DemandesRenduRoutes from "./routes/demandesRendu.js";
+import AttributionsRoutes from "./routes/attributions.js";
+
 
 import dotenv from 'dotenv';
 import cors from 'cors';
@@ -30,8 +32,10 @@ app.use(bodyParser.json());
 app.use('/api/materiels/', RouteMateriels);
 app.use('/api/typeMateriels/',typeMaterielsRoutes);
 app.use('/api/utilisateurs',utilisateurRoutes);
-app.use('/api/demandesAttribution', demandesAttributionRoutes);
-app.use('/api/demandesRendu', demandesRenduRoutes);
+app.use('/api/demandesAttribution', DemandeAttributionRoutes);
+app.use('/api/demandesRendu', DemandesRenduRoutes);
+app.use('/api/attributions', AttributionsRoutes);
+
 
 
 export default app;

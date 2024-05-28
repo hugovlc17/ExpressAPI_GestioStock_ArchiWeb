@@ -6,11 +6,6 @@ const demandeRenduSchema = new mongoose.Schema({
         ref: 'Utilisateur',
         required: true
     },
-    id_materiel: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Materiel',
-        required: true
-    },
     date_demande: {
         type: Date,
         default: Date.now,
@@ -21,9 +16,6 @@ const demandeRenduSchema = new mongoose.Schema({
         enum: ['En attente', 'Approuvée', 'Refusée'],
         default: 'En attente',
         required: true
-    },
-    salle: {
-        type: String
     },
     id_attribution: {
         type: mongoose.Schema.Types.ObjectId,

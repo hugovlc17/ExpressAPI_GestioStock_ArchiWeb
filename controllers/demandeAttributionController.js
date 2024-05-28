@@ -4,6 +4,7 @@ import Attribution from "../models/attribution.js";
 import Materiel from "../models/materiel.js";
 import Utilisateur from "../models/utilisateur.js";
 
+
 export const getAllDemandesAttribution = async (req, res) => {
     try {
         const demandesAttribution = await DemandeAttribution.find().populate('id_utilisateur').populate('id_materiel');
@@ -123,4 +124,22 @@ export const validerDemandeAttribution = async (req, res) => {
     }
 };
 
-export default { getAllDemandesAttribution, createDemandeAttribution, getDemandeAttributionUserID, deleteDemandeAttribution, getDemandeAttributionEnAttente, validerDemandeAttribution };
+export const refuserDemandeAttribution = async (req, res) => {
+    const { id_demande } = req.params;
+
+    try {
+        const demande = await DemandeAttribution.findById(id_demande);
+        if (!demande) {
+            return handler(res, 'BAD_REQUEST', 'La demande de rendu n\'existe pas.', 400);
+        }
+
+        demande.statut = 'Refusée';
+        await demande.save();
+
+        res.json({ message: 'Demande de rendu refusée avec succès.' });
+    } catch (error) {
+        return handler(res, 'INTERNAL_SERVER_ERROR', error.message);
+    }
+};
+
+export default { getAllDemandesAttribution, createDemandeAttribution, getDemandeAttributionUserID, deleteDemandeAttribution, getDemandeAttributionEnAttente, validerDemandeAttribution, refuserDemandeAttribution };

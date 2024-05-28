@@ -7,6 +7,7 @@ router.get('/', demandeRenduController.getAllDemandesRendu);
 router.post('/', demandeRenduController.createDemandeRendu);
 router.get('/:id_utilisateur', demandeRenduController.getDemandeRenduUserID);
 router.delete('/:id', demandeRenduController.deleteDemandeRendu);
-router.put('/:id_demande/valider', demandeRenduController.validerDemandeRendu);
+router.put('/valider/:id_demande', demandeRenduController.validerDemandeRendu);
+router.post('/refuser/:id_demande', demandeRenduController.refuserDemandeRendu);
 
 export default router;
