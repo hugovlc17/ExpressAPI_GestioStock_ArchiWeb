@@ -16,6 +16,10 @@ const demandeAttributionSchema = new mongoose.Schema({
         default: Date.now,
         required: true
     },
+    date_retour_prevue: {
+        type: Date,
+        required: true
+    },
     statut: {
         type: String,
         enum: ['En attente', 'Approuvée', 'Refusée'],

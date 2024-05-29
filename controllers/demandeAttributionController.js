@@ -17,6 +17,7 @@ export const getAllDemandesAttribution = async (req, res) => {
             statut: demande.statut,
             salle: demande.salle,
             date_demande: demande.date_demande.toISOString().split('T')[0], // Format YYYY-MM-DD
+            date_retour_prevue: demande.date_retour_prevue.toISOString().split('T')[0],
             __v: demande.__v
         }));
         res.status(200).json({ demandesAttribution: formattedDemandes });
@@ -26,7 +27,7 @@ export const getAllDemandesAttribution = async (req, res) => {
 };
 
 export const createDemandeAttribution = async (req, res) => {
-    const { id_utilisateur, id_materiel, salle } = req.body;
+    const { id_utilisateur, id_materiel, salle, date_retour_prevue } = req.body;
 
     try {
         const utilisateur = await Utilisateur.findById(id_utilisateur);
@@ -42,7 +43,8 @@ export const createDemandeAttribution = async (req, res) => {
         const demande = new DemandeAttribution({
             id_utilisateur,
             id_materiel,
-            salle
+            salle,
+            date_retour_prevue
         });
 
         await demande.save();
