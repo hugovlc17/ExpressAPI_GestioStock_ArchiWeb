@@ -40,6 +40,12 @@ export const createDemandeAttribution = async (req, res) => {
             return handler(res, 'BAD_REQUEST', "Le matériel n'existe pas.", 400);
         }
 
+        const dateRetourPrevue = new Date(date_retour_prevue);
+        const currentDate = new Date();
+        if (dateRetourPrevue < currentDate) {
+            return handler(res, 'BAD_REQUEST', "La date de retour prévue est déjà passée.", 400);
+        }
+
         const demande = new DemandeAttribution({
             id_utilisateur,
             id_materiel,
