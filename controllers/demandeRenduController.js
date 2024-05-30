@@ -55,8 +55,19 @@ export const getDemandeRenduUserID = async (req, res) => {
             return handler(res, 'NOT_FOUND', "L'utilisateur n'existe pas.", 404);
         }
 
-        const demandes = await DemandeRendu.find({ id_utilisateur: id_utilisateur });
-        res.json(demandes);
+        const demandes = await DemandeRendu.find({ id_utilisateur: id_utilisateur })
+            .populate('id_utilisateur', 'username');
+
+        const demandesRendu = demandes.map(demande =>({
+            _id: demande._id,
+            id_utilisateur: demande.id_utilisateur._id,
+            statut: demande.statut,
+            id_attribution: demande.id_attribution._id,
+            date_demande: new Date(demande.date_demande).toISOString().split('T')[0],
+            __v: demande.__v,
+            username_utilisateur: demande.id_utilisateur.username
+        }))
+        res.json(demandesRendu);
     } catch (error) {
         return handler(res, 'INTERNAL_SERVER_ERROR', error.message);
     }

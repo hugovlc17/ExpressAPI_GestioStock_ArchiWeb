@@ -1,11 +1,10 @@
 import { handler } from '../exceptions/handler.js';
 import DemandeAttribution from "../models/demandeAttribution.js";
 import Attribution from "../models/attribution.js";
-import Materiel from "../models/materiel.js";
 import Utilisateur from "../models/utilisateur.js";
 
 
-export const getAllDemandesAttribution = async (req, res) => {
+const getAllDemandesAttribution = async (req, res) => {
     try {
         const demandesAttribution = await DemandeAttribution.find().populate('id_utilisateur').populate('id_materiel');
         const formattedDemandes = demandesAttribution.map(demande => ({
@@ -26,7 +25,7 @@ export const getAllDemandesAttribution = async (req, res) => {
     }
 };
 
-export const createDemandeAttribution = async (req, res) => {
+const createDemandeAttribution = async (req, res) => {
     const { id_utilisateur, id_materiel, salle, date_retour_prevue } = req.body;
 
     try {
@@ -60,7 +59,7 @@ export const createDemandeAttribution = async (req, res) => {
     }
 };
 
-export const getDemandeAttributionUserID = async (req, res) => {
+const getDemandeAttributionUserID = async (req, res) => {
     const { id_utilisateur } = req.params;
 
     try {
@@ -69,14 +68,31 @@ export const getDemandeAttributionUserID = async (req, res) => {
             return handler(res, 'NOT_FOUND', "L'utilisateur n'existe pas.", 404);
         }
 
-        const demandes = await DemandeAttribution.find({ id_utilisateur: id_utilisateur });
-        res.json(demandes);
+        const demandes = await DemandeAttribution.find({ id_utilisateur: id_utilisateur })
+            .populate('id_utilisateur', 'username') // Populate the 'id_utilisateur' field and only select 'username'
+            .populate('id_materiel', 'nom'); // Populate the 'id_materiel' field and only select 'nom'
+
+        // Transform the demands to include the desired fields
+        const demandesAttribution = demandes.map(demande => ({
+            _id: demande._id,
+            id_utilisateur: demande.id_utilisateur._id,
+            username_utilisateur: demande.id_utilisateur.username,
+            id_materiel: demande.id_materiel._id,
+            nom_materiel: demande.id_materiel.nom,
+            statut: demande.statut,
+            salle: demande.salle,
+            date_demande: new Date(demande.date_demande).toISOString().split('T')[0], // Format the date as desired
+            date_retour_prevue: new Date(demande.date_retour_prevue).toISOString().split('T')[0], // Format the date as desired
+            __v: demande.__v
+        }));
+
+        res.json(demandesAttribution);
     } catch (error) {
         return handler(res, 'INTERNAL_SERVER_ERROR', error.message);
     }
 };
 
-export const deleteDemandeAttribution = async (req, res) => {
+const deleteDemandeAttribution = async (req, res) => {
     const { id } = req.params;
 
     try {
@@ -87,7 +103,7 @@ export const deleteDemandeAttribution = async (req, res) => {
     }
 };
 
-export const getDemandeAttributionEnAttente = async (req, res) => {
+const getDemandeAttributionEnAttente = async (req, res) => {
     try {
         const demandes = await DemandeAttribution.find({ statut: 'En attente' });
         res.json(demandes);
@@ -96,7 +112,7 @@ export const getDemandeAttributionEnAttente = async (req, res) => {
     }
 };
 
-export const validerDemandeAttribution = async (req, res) => {
+const validerDemandeAttribution = async (req, res) => {
     const { id_demande } = req.params;
 
     try {
@@ -132,7 +148,7 @@ export const validerDemandeAttribution = async (req, res) => {
     }
 };
 
-export const refuserDemandeAttribution = async (req, res) => {
+const refuserDemandeAttribution = async (req, res) => {
     const { id_demande } = req.params;
 
     try {
