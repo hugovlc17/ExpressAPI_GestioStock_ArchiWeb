@@ -1,6 +1,7 @@
 //import Affectation from "../models/attribution.js";
 import Attribution from "../models/attribution.js";
 import {handler} from '../exceptions/handler.js';
+import Utilisateur from "../models/utilisateur.js";
 
 
 
@@ -46,7 +47,34 @@ const getAllAttribution = (req, res)=> {
         });
 }
 
+const getAttributionUserID = async (req, res) => {
+    const { idUser } = req.params;
+    try {
+        const utilisateur = await Utilisateur.findById(idUser);
+        if (!utilisateur) {
+            return handler(res, 'NOT_FOUND', "L'utilisateur n'existe pas.", 404);
+        }
+
+        // Recup uniquement les attributions avec le statut 'en cours'
+        const attributions = await Attribution.find({ id_utilisateur: idUser, statut: 'en cours' });
+
+        const formattedAttributions = attributions.map(attribution => {
+            return {
+                ...attribution.toObject(),
+                date_attribution:  new Date(attribution.date_attribution).toISOString().split('T')[0],
+                date_retour_prevue: new Date(attribution.date_retour_prevue).toISOString().split('T')[0]
+            };
+        });
+
+        res.json(formattedAttributions);
+    } catch (error) {
+        return handler(res, 'INTERNAL_SERVER_ERROR', error.message);
+    }
+};
+
+
 export default {
     getUneAttribution,
-    getAllAttribution
+    getAllAttribution,
+    getAttributionUserID
 };
