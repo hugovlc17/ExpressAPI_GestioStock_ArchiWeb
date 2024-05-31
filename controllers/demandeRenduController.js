@@ -113,10 +113,12 @@ export const validerDemandeRendu = async (req, res) => {
 
         // Mettre à jour le statut du matériel
         materiel.statut = 'stocké';
-        await materiel.save();
+
 
         // Mettre à jour le statut de la demande de rendu
         demande.statut = 'Approuvée';
+
+        await materiel.save();
         await demande.save();
 
         // Envoyer une réponse de succès

@@ -2,6 +2,7 @@ import { handler } from '../exceptions/handler.js';
 import DemandeAttribution from "../models/demandeAttribution.js";
 import Attribution from "../models/attribution.js";
 import Utilisateur from "../models/utilisateur.js";
+import Materiel from "../models/materiel.js";
 
 
 const getAllDemandesAttribution = async (req, res) => {
@@ -135,11 +136,13 @@ const validerDemandeAttribution = async (req, res) => {
         });
 
         demande.statut = 'Approuvée';
-        await demande.save();
 
-        await attribution.save();
 
         materiel.statut = 'utilisé';
+        materiel.salle = demande.salle;
+
+        await demande.save();
+        await attribution.save();
         await materiel.save();
 
         res.json(attribution);
