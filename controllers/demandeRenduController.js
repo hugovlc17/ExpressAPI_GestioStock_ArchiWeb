@@ -8,13 +8,31 @@ import Utilisateur from "../models/utilisateur.js";
 
 export const getAllDemandesRendu = async (req, res) => {
     try {
-        const demandes = await DemandeRendu.find().populate('id_utilisateur', 'username');
-        res.json(demandes.map(demande => ({
-            ...demande.toJSON(),
-            date_demande : demande.date_demande.toISOString().split('T')[0],
-            id_utilisateur: demande.id_utilisateur._id,
-            username_utilisateur: demande.id_utilisateur.username
-        })));
+        const demandes = await DemandeRendu.find()
+            .populate('id_utilisateur', 'username')
+            .populate({
+                path: 'id_attribution',
+                populate: {
+                    path: 'id_materiel',
+                    select: 'nom'
+                }
+            });
+
+        const result = demandes.map(demande => {
+            const demandeJSON = demande.toJSON();
+            return {
+                _id: demandeJSON._id,
+                id_utilisateur: demandeJSON.id_utilisateur?._id || null,
+                statut: demandeJSON.statut,
+                id_attribution: demandeJSON.id_attribution?._id || null,
+                date_demande: demande.date_demande.toISOString().split('T')[0],
+                __v: demandeJSON.__v,
+                username_utilisateur: demandeJSON.id_utilisateur?.username || null,
+                nom_materiel: demandeJSON.id_attribution?.id_materiel?.nom || null
+            };
+        });
+
+        res.json(result);
     } catch (error) {
         return handler(res, 'INTERNAL_SERVER_ERROR', error.message);
     }
@@ -56,17 +74,29 @@ export const getDemandeRenduUserID = async (req, res) => {
         }
 
         const demandes = await DemandeRendu.find({ id_utilisateur: id_utilisateur })
-            .populate('id_utilisateur', 'username');
+            .populate('id_utilisateur', 'username')
+            .populate({
+                path: 'id_attribution',
+                populate: {
+                    path: 'id_materiel',
+                    select: 'nom'
+                }
+            });
 
-        const demandesRendu = demandes.map(demande =>({
-            _id: demande._id,
-            id_utilisateur: demande.id_utilisateur._id,
-            statut: demande.statut,
-            id_attribution: demande.id_attribution._id,
-            date_demande: new Date(demande.date_demande).toISOString().split('T')[0],
-            __v: demande.__v,
-            username_utilisateur: demande.id_utilisateur.username
-        }))
+        const demandesRendu = demandes.map(demande => {
+            const demandeJSON = demande.toJSON();
+            return {
+                _id: demandeJSON._id,
+                id_utilisateur: demandeJSON.id_utilisateur?._id || null,
+                statut: demandeJSON.statut,
+                id_attribution: demandeJSON.id_attribution?._id || null,
+                date_demande: new Date(demande.date_demande).toISOString().split('T')[0],
+                __v: demandeJSON.__v,
+                username_utilisateur: demandeJSON.id_utilisateur?.username || null,
+                nom_materiel: demandeJSON.id_attribution?.id_materiel?.nom || null
+            };
+        });
+
         res.json(demandesRendu);
     } catch (error) {
         return handler(res, 'INTERNAL_SERVER_ERROR', error.message);
@@ -111,17 +141,13 @@ export const validerDemandeRendu = async (req, res) => {
             return handler(res, 'BAD_REQUEST', 'Le matériel associé à l\'attribution n\'existe pas.', 400);
         }
 
-        // Mettre à jour le statut du matériel
         materiel.statut = 'stocké';
 
-
-        // Mettre à jour le statut de la demande de rendu
         demande.statut = 'Approuvée';
 
         await materiel.save();
         await demande.save();
 
-        // Envoyer une réponse de succès
         res.json({ message: 'Demande de rendu validée avec succès.' });
     } catch (error) {
         return handler(res, 'INTERNAL_SERVER_ERROR', error.message);
