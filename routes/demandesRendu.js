@@ -1,5 +1,6 @@
 import express from "express";
 import demandeRenduController from "../controllers/demandeRenduController.js";
+import auth from "../middleware/auth.js";
 
 const router = express.Router();
 

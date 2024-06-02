@@ -8,18 +8,23 @@ import Materiel from "../models/materiel.js";
 const getAllDemandesAttribution = async (req, res) => {
     try {
         const demandesAttribution = await DemandeAttribution.find().populate('id_utilisateur').populate('id_materiel');
-        const formattedDemandes = demandesAttribution.map(demande => ({
-            _id: demande._id,
-            id_utilisateur: demande.id_utilisateur._id,
-            username_utilisateur: demande.id_utilisateur.username,
-            id_materiel: demande.id_materiel._id,
-            nom_materiel: demande.id_materiel.nom,
-            statut: demande.statut,
-            salle: demande.salle,
-            date_demande: demande.date_demande.toISOString().split('T')[0], // Format YYYY-MM-DD
-            date_retour_prevue: demande.date_retour_prevue.toISOString().split('T')[0],
-            __v: demande.__v
-        }));
+
+        const formattedDemandes = demandesAttribution.map(demande => {
+            const formattedDemande = {
+                _id: demande._id,
+                id_utilisateur: demande.id_utilisateur ? demande.id_utilisateur._id : null,
+                username_utilisateur: demande.id_utilisateur ? demande.id_utilisateur.username : null,
+                id_materiel: demande.id_materiel ? demande.id_materiel._id : null,
+                nom_materiel: demande.id_materiel ? demande.id_materiel.nom : null,
+                statut: demande.statut,
+                salle: demande.salle,
+                date_demande: demande.date_demande ? demande.date_demande.toISOString().split('T')[0] : null,
+                date_retour_prevue: demande.date_retour_prevue ? demande.date_retour_prevue.toISOString().split('T')[0] : null,
+                __v: demande.__v
+            };
+            return formattedDemande;
+        });
+
         res.status(200).json({ demandesAttribution: formattedDemandes });
     } catch (error) {
         return handler(res, 'INTERNAL_ERROR', error.message, 500);
@@ -74,25 +79,27 @@ const getDemandeAttributionUserID = async (req, res) => {
             .populate('id_materiel', 'nom'); // Populate the 'id_materiel' field and only select 'nom'
 
         // Transform the demands to include the desired fields
-        const demandesAttribution = demandes.map(demande => ({
-            _id: demande._id,
-            id_utilisateur: demande.id_utilisateur._id,
-            username_utilisateur: demande.id_utilisateur.username,
-            id_materiel: demande.id_materiel._id,
-            nom_materiel: demande.id_materiel.nom,
-            statut: demande.statut,
-            salle: demande.salle,
-            date_demande: new Date(demande.date_demande).toISOString().split('T')[0], // Format the date as desired
-            date_retour_prevue: new Date(demande.date_retour_prevue).toISOString().split('T')[0], // Format the date as desired
-            __v: demande.__v
-        }));
+        const demandesAttribution = demandes.map(demande => {
+            const formattedDemande = {
+                _id: demande._id,
+                id_utilisateur: demande.id_utilisateur ? demande.id_utilisateur._id : null,
+                username_utilisateur: demande.id_utilisateur ? demande.id_utilisateur.username : null,
+                id_materiel: demande.id_materiel ? demande.id_materiel._id : null,
+                nom_materiel: demande.id_materiel ? demande.id_materiel.nom : null,
+                statut: demande.statut,
+                salle: demande.salle,
+                date_demande: demande.date_demande ? new Date(demande.date_demande).toISOString().split('T')[0] : null, // Format the date as desired
+                date_retour_prevue: demande.date_retour_prevue ? new Date(demande.date_retour_prevue).toISOString().split('T')[0] : null, // Format the date as desired
+                __v: demande.__v
+            };
+            return formattedDemande;
+        });
 
         res.json(demandesAttribution);
     } catch (error) {
         return handler(res, 'INTERNAL_SERVER_ERROR', error.message);
     }
 };
-
 const deleteDemandeAttribution = async (req, res) => {
     const { id } = req.params;
 

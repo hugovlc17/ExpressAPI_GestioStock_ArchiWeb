@@ -1,4 +1,7 @@
 import Materiel from '../models/materiel.js';
+import DemandeAttribution from "../models/demandeAttribution.js";
+import DemandeRendu from "../models/demandeRendu.js";
+import Attribution from "../models/attribution.js";
 import {handler} from '../exceptions/handler.js';
 
 
@@ -77,15 +80,32 @@ const deleteMateriel = async (req, res) => {
     const id = req.params.id;
 
     try {
+        // Supprimer le matériel
         const deletedMateriel = await Materiel.findByIdAndDelete(id);
         if (!deletedMateriel) {
             return handler(res, 'NOT_FOUND', 'Matériel non trouvé', 404);
         }
+
+        // Supprimer les demandes d'attribution associées
+        await DemandeAttribution.deleteMany({ id_materiel: id });
+
+        // Récupérer les attributions associées au matériel
+        const attributions = await Attribution.find({ id_materiel: id }, '_id');
+
+        // Supprimer les demandes de rendu associées à partir de l'ID de l'attribution
+        for (const attribution of attributions) {
+            await DemandeRendu.deleteMany({ id_attribution: attribution._id });
+        }
+
+        // Supprimer les attributions associées
+        await Attribution.deleteMany({ id_materiel: id });
+
         res.status(200).json({ message: 'Matériel supprimé avec succès' });
     } catch (error) {
         return handler(res, 'INTERNAL_ERROR', error.message, 500);
     }
 }
+
 
 export default {
     createMateriel,
