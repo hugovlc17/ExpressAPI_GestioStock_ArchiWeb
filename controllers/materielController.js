@@ -29,17 +29,26 @@ const createMateriel = (req, res) => {
         });
 }
 
-const getUnMateriel = (req, res)=> {
+const getUnMateriel = async (req, res) => {
     const id = req.params.id;
 
-    Materiel.findOne({_id: id})
-        .then((materiel) => {
-            return res.status(200).json({materiel})
-        })
-        .catch(error => {
-            return handler(res, 'INTERNAL_ERROR', error.message, 500);
-        });
-}
+    try {
+        const materiel = await Materiel.findOne({_id: id});
+        if (!materiel) {
+            return handler(res, 'NOT_FOUND', "Le matériel n'existe pas.", 404);
+        }
+
+        // Formater la date de renouvellement
+        const formattedMateriel = {
+            ...materiel.toObject(),
+            date_renouvellement: materiel.date_renouvellement ? new Date(materiel.date_renouvellement).toISOString().split('T')[0] : null
+        };
+
+        return res.status(200).json({ materiel: formattedMateriel });
+    } catch (error) {
+        return handler(res, 'INTERNAL_ERROR', error.message, 500);
+    }
+};
 
 const getAllMateriel = (req, res)=> {
 

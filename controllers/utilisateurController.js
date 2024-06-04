@@ -5,6 +5,9 @@ import jwt from "jsonwebtoken";
 import dotenv from 'dotenv';
 import utilisateurs from "../routes/utilisateurs.js";
 import Materiel from "../models/materiel.js";
+import DemandeAttribution from "../models/demandeAttribution.js";
+import DemandeRendu from "../models/demandeRendu.js";
+import attribution from "../models/attribution.js";
 dotenv.config();
 
 const secretKey = process.env.SECRET_KEY;
@@ -147,6 +150,17 @@ const deleteUtilisateur = async (req, res) =>{
         if(!deleteUtilisateur) {
             return handler(res, 'NOT_FOUND', 'Utilisateur non trouvé', 404);
         }
+
+        // Supprimer les demandes d'attribution associées
+        await DemandeAttribution.deleteMany({ id_utilisateur: id });
+
+        // Supprimer les demandes de rendu associées
+        await DemandeRendu.deleteMany({ id_utilisateur: id });
+
+        // Supprimer les attributions associées
+        await attribution.deleteMany({ id_utilisateur: id });
+
+
         res.status(200).json({ message: 'Utilisateur supprimé avec succès'});
     }catch (error){
         return handler(res, 'INTERNAL_ERROR', error.message, 500);
