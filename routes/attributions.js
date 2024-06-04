@@ -4,9 +4,9 @@ import auth from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get('/:id', attributionController.getUneAttribution);
-router.get('/', attributionController.getAllAttribution);
-router.get('/user/:idUser', attributionController.getAttributionUserID);
+router.get('/:id',auth , attributionController.getUneAttribution);
+router.get('/',auth , attributionController.getAllAttribution);
+router.get('/user/:idUser',auth , attributionController.getAttributionUserID);
 
 
 export default router;
