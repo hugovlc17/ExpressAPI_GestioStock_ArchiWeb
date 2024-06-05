@@ -115,11 +115,39 @@ const deleteMateriel = async (req, res) => {
     }
 }
 
+const getStatMaterielStatut = async (req, res) => {
+    try {
+        const stats = await Materiel.aggregate([
+            {
+                $group: {
+                    _id: '$statut',
+                    count: { $sum: 1 }
+                }
+            }
+        ]);
+
+        const formattedStats = stats.reduce((acc, stat) => {
+            if (stat._id === 'stocké') {
+                acc.stocke = stat.count;
+            } else if (stat._id === 'utilisé') {
+                acc.utilise = stat.count;
+            }
+            return acc;
+        }, { stocke: 0, utilise: 0 });
+
+        res.status(200).json({ stats: formattedStats });
+    } catch (error) {
+        return handler(res, 'INTERNAL_ERROR', error.message, 500);
+    }
+};
+
+
 
 export default {
     createMateriel,
     getUnMateriel,
     getAllMateriel,
     updateMateriel,
-    deleteMateriel
+    deleteMateriel,
+    getStatMaterielStatut
 };
