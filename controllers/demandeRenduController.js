@@ -172,4 +172,13 @@ export const refuserDemandeRendu = async (req, res) => {
     }
 };
 
-export default { getAllDemandesRendu, createDemandeRendu, getDemandeRenduUserID, deleteDemandeRendu, validerDemandeRendu, refuserDemandeRendu };
+export const countDemandeRenduEnAttente = async (req, res) => {
+    try {
+        const count = await DemandeRendu.countDocuments({ statut: 'En attente' });
+        res.json({ count });
+    } catch (error) {
+        return handler(res, 'INTERNAL_SERVER_ERROR', error.message);
+    }
+};
+
+export default { getAllDemandesRendu, createDemandeRendu, getDemandeRenduUserID, deleteDemandeRendu, validerDemandeRendu, refuserDemandeRendu, countDemandeRenduEnAttente };

@@ -141,6 +141,34 @@ const getStatMaterielStatut = async (req, res) => {
     }
 };
 
+const getMaterielRenouvellementBientot = async (req, res) => {
+    try {
+        const now = new Date();
+        const dansTroisMois = new Date();
+        dansTroisMois.setMonth(dansTroisMois.getMonth() + 3);
+
+        const materielsProchainsMois = await Materiel.find({
+            date_renouvellement: { $gte: now, $lte: dansTroisMois }
+        }, 'nom matricule date_renouvellement');
+
+        const materielsDepasses = await Materiel.find({
+            date_renouvellement: { $lt: now }
+        }, 'nom matricule date_renouvellement');
+
+        const materiels = [...materielsProchainsMois, ...materielsDepasses];
+
+        const formattedMateriels = materiels.map(materiel => ({
+            nom: materiel.nom,
+            matricule: materiel.matricule,
+            date_renouvellement: materiel.date_renouvellement ? new Date(materiel.date_renouvellement).toISOString().split('T')[0] : null
+        }));
+
+        res.status(200).json({ materiels: formattedMateriels });
+    } catch (error) {
+        return handler(res, 'INTERNAL_ERROR', error.message, 500);
+    }
+};
+
 
 
 export default {
@@ -149,5 +177,6 @@ export default {
     getAllMateriel,
     updateMateriel,
     deleteMateriel,
-    getStatMaterielStatut
+    getStatMaterielStatut,
+    getMaterielRenouvellementBientot
 };

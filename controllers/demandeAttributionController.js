@@ -176,4 +176,13 @@ const refuserDemandeAttribution = async (req, res) => {
     }
 };
 
-export default { getAllDemandesAttribution, createDemandeAttribution, getDemandeAttributionUserID, deleteDemandeAttribution, getDemandeAttributionEnAttente, validerDemandeAttribution, refuserDemandeAttribution };
+const countDemandeAttributionEnAttente = async (req, res) => {
+    try {
+        const count = await DemandeAttribution.countDocuments({ statut: 'En attente' });
+        res.json({ count });
+    } catch (error) {
+        return handler(res, 'INTERNAL_SERVER_ERROR', error.message);
+    }
+};
+
+export default { getAllDemandesAttribution, createDemandeAttribution, getDemandeAttributionUserID, deleteDemandeAttribution, getDemandeAttributionEnAttente, validerDemandeAttribution, refuserDemandeAttribution, countDemandeAttributionEnAttente };

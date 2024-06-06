@@ -72,11 +72,107 @@ const getAttributionUserID = async (req, res) => {
     }
 };
 
+const getAttributionsDepassees = async (req, res) => {
+    try {
+        const now = new Date();
+        const attributions = await Attribution.find({
+            statut: 'en cours',
+            date_retour_prevue: { $lt: now }
+        }).populate('id_materiel', 'nom salle').populate('id_utilisateur', 'username');
+
+        const formattedAttributions = attributions.map(attribution => ({
+            username: attribution.id_utilisateur.username,
+            nom: attribution.id_materiel.nom,
+            salle: attribution.id_materiel.salle,
+            date_retour_prevue: attribution.date_retour_prevue.toISOString().split('T')[0]
+        }));
+
+        res.status(200).json({ attributions: formattedAttributions });
+    } catch (error) {
+        return handler(res, 'INTERNAL_ERROR', error.message, 500);
+    }
+};
+
+const getAttributionsBientotExpirees = async (req, res) => {
+    try {
+        const now = new Date();
+        const dateDans1Semaine = new Date();
+        dateDans1Semaine.setDate(now.getDate() + 7);
+
+        const attributions = await Attribution.find({
+            statut: 'en cours',
+            date_retour_prevue: { $gte: now, $lte: dateDans1Semaine }
+        }).populate('id_materiel', 'nom salle').populate('id_utilisateur', 'username');
+
+        const formattedAttributions = attributions.map(attribution => ({
+            username : attribution.id_utilisateur.username,
+            nom: attribution.id_materiel.nom,
+            salle: attribution.id_materiel.salle,
+            date_retour_prevue: attribution.date_retour_prevue.toISOString().split('T')[0]
+        }));
+
+        res.status(200).json({ attributions: formattedAttributions });
+    } catch (error) {
+        return handler(res, 'INTERNAL_ERROR', error.message, 500);
+    }
+};
+
+const getAttributionsDepasseesUtilisateur = async (req, res) => {
+    const userId = req.params.userId;
+    try {
+        const now = new Date();
+        const attributions = await Attribution.find({
+            id_utilisateur: userId,
+            statut: 'en cours',
+            date_retour_prevue: { $lt: now }
+        }).populate('id_materiel', 'nom salle');
+
+        const formattedAttributions = attributions.map(attribution => ({
+            nom: attribution.id_materiel.nom,
+            salle: attribution.id_materiel.salle,
+            date_retour_prevue: attribution.date_retour_prevue.toISOString().split('T')[0]
+        }));
+
+        res.status(200).json({ attributions: formattedAttributions });
+    } catch (error) {
+        return handler(res, 'INTERNAL_ERROR', error.message, 500);
+    }
+};
+
+const getAttributionsBientotExpireesUtilisateur = async (req, res) => {
+    const userId = req.params.userId;
+    try {
+        const now = new Date();
+        const dateDans1Semaine = new Date();
+        dateDans1Semaine.setDate(now.getDate() + 7);
+
+        const attributions = await Attribution.find({
+            id_utilisateur: userId,
+            statut: 'en cours',
+            date_retour_prevue: { $gte: now, $lte: dateDans1Semaine }
+        }).populate('id_materiel', 'nom salle');
+
+        const formattedAttributions = attributions.map(attribution => ({
+            nom: attribution.id_materiel.nom,
+            salle: attribution.id_materiel.salle,
+            date_retour_prevue: attribution.date_retour_prevue.toISOString().split('T')[0]
+        }));
+
+        res.status(200).json({ attributions: formattedAttributions });
+    } catch (error) {
+        return handler(res, 'INTERNAL_ERROR', error.message, 500);
+    }
+};
+
 
 
 
 export default {
     getUneAttribution,
     getAllAttribution,
-    getAttributionUserID
+    getAttributionUserID,
+    getAttributionsDepassees,
+    getAttributionsBientotExpirees,
+    getAttributionsDepasseesUtilisateur,
+    getAttributionsBientotExpireesUtilisateur
 };
